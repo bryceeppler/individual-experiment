@@ -45,8 +45,8 @@ def run_interruption():
     schedule_interruption()
 
 def schedule_interruption():
-    # interval = 1.5 + random.uniform(-1, 1) # between 4-6 minutes
-    interval = 0.1
+    interval = 1.5 + random.uniform(-1, 1) # between 4-6 minutes
+    # interval = 0.1
     schedule.every(interval).minutes.do(run_interruption)
 
 # Schedule first interruption
