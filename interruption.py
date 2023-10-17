@@ -1,6 +1,11 @@
 import numpy as np
 import simpleaudio as sa
-
+import tkinter as tk
+from tkinter import messagebox
+import schedule
+import time
+import random
+import datetime
 
 def play_tone(frequency, duration):
     """
@@ -20,10 +25,38 @@ def play_tone(frequency, duration):
     play_obj = sa.play_buffer(audio, 1, 2, sample_rate)
     play_obj.wait_done()
 
+def show_popup():
+    root = tk.Tk()
+    root.withdraw()
+    messagebox.showinfo("Interruption time", "Get interrupted bro!")
+    root.destroy()
 
-def main():
-    # Play a 1-second tone at 440 Hz
+def interrupt():
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    global num_interruptions
+    num_interruptions += 1
+    print(f"Interruption number {num_interruptions} at {timestamp}")
     play_tone(440, 1)
+    show_popup()
 
-if __name__ == "__main__":
-    main()
+def run_interruption():
+    interrupt()
+    schedule.clear()
+    schedule_interruption()
+
+def schedule_interruption():
+    # interval = 1.5 + random.uniform(-1, 1) # between 4-6 minutes
+    interval = 0.1
+    schedule.every(interval).minutes.do(run_interruption)
+
+# Schedule first interruption
+schedule_interruption()
+
+num_interruptions = 0
+start_timestamp = datetime.datetime.now()
+
+while True:
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    print(f"Time elapsed: {datetime.datetime.now() - start_timestamp}")
+    schedule.run_pending()
+    time.sleep(1)
